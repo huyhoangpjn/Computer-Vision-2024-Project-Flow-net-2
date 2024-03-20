@@ -317,6 +317,8 @@ class ChairsSDHomTest(ChairsSDHom):
     def __init__(self, args, is_cropped = False, root = '', replicates = 1):
         super(ChairsSDHomTest, self).__init__(args, is_cropped = is_cropped, root = root, dstype = 'test', replicates = replicates)
 
+import os
+
 class ImagesFromFolder(data.Dataset):
   def __init__(self, args, is_cropped, root = '/path/to/frames/only/folder', iext = 'png', replicates = 1):
     self.args = args
@@ -325,12 +327,30 @@ class ImagesFromFolder(data.Dataset):
     self.render_size = args.inference_size
     self.replicates = replicates
 
-    images = sorted( glob( join(root, '*.' + iext) ) )
     self.image_list = []
-    for i in range(len(images)-1):
-        im1 = images[i]
-        im2 = images[i+1]
-        self.image_list += [ [ im1, im2 ] ]
+    
+    for pair in os.listdir(root):
+      pair_path = join(root, pair)
+      # Direct integration (To the reference method)
+      if 'direct' in root:
+        for img in os.listdir(pair_path):
+          if '001' in img:
+            img_begin = join(pair_path, img)
+          else:
+            img_current = join(pair_path, img)
+          
+        self.image_list += [[img_current, img_begin]]
+      # Sequential
+      else:
+        images = sorted( glob( join(pair_path, '*.' + iext) ) )
+        self.image_list += [[images[0], images[1]]]
+          
+    #images = sorted( glob( join(root, '*.' + iext) ) )
+
+    # for i in range(len(images)-1):
+    #     im1 = images[i]
+    #     im2 = images[i+1]
+    #     self.image_list += [ [ im1, im2 ] ]
 
     self.size = len(self.image_list)
 
