@@ -343,7 +343,7 @@ class ImagesFromFolder(data.Dataset):
       # Sequential
       else:
         images = sorted( glob( join(pair_path, '*.' + iext) ) )
-        self.image_list += [[images[0], images[1]]]
+        self.image_list += [[images[1], images[0]]]
           
     #images = sorted( glob( join(root, '*.' + iext) ) )
 
